@@ -48,8 +48,6 @@ jobs:
           echo 'export PATH=$PATH:/opt/sonar-scanner/bin' >> ~/.bashrc
           source ~/.bashrc
 
-
-
       - name: Build Backend
         working-directory: apps/backend/kpi-visualization
         run: |
