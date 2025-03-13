@@ -9,6 +9,7 @@ COPY kpi-visualization kpi-visualization
 
 ENV GRADLE_OPTS -Dorg.gradle.daemon=false -Dorg.gradle.internal.launcher.welcomeMessageEnabled=false 
 
+RUN chmod +x ./gradlew
 RUN ./gradlew clean build -x test
 
 ENV JAVA_HOME=/usr/lib/jvm/zulu11-ca
