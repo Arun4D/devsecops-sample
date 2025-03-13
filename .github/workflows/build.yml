@@ -10,6 +10,7 @@ jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
+    environment: dev
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,7 +44,7 @@ jobs:
       - name: Build and analyze backend
         working-directory: apps/backend
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_DEV }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build sonar --info
 
       # Frontend setup and build
@@ -70,6 +71,5 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           projectBaseDir: apps/frontend/kpi-dashboard  
