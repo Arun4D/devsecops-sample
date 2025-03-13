@@ -11,10 +11,13 @@ jobs:
     name: Build and analyze
     runs-on: ubuntu-latest
     environment: dev
+    outputs:
+      backend_sonar_status: ${{ steps.sonar_backend.outcome }}
+      frontend_sonar_status: ${{ steps.sonar_frontend.outcome }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensures better relevancy of analysis
+          fetch-depth: 0
 
       # Backend setup and build
       - name: Set up JDK 17
@@ -22,7 +25,7 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu'
-
+      
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -43,8 +46,9 @@ jobs:
           unzip sonar-scanner.zip
           sudo mv sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner
           echo "/opt/sonar-scanner/bin" >> $GITHUB_PATH
-          
-      - name: Build and SonarQube Scan (Backend) 
+
+      # Backend SonarQube Scan
+      - name: Build and SonarQube Scan (Backend)
         working-directory: apps/backend/kpi-visualization
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -53,7 +57,6 @@ jobs:
           chmod +x ../gradlew 
           ../gradlew clean build test --info
           sonar-scanner -Dproject.settings=sonar-project.properties
-
 
       # Frontend setup and build
       - name: Set up Node.js
@@ -67,18 +70,76 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node
-
+          
       - name: Install and build frontend
+        working-directory: apps/frontend/kpi-dashboard
         run: |
-          cd apps/frontend/kpi-dashboard
           npm install
           npm run build
 
-      # SonarQube Scan for frontend
+      # Frontend SonarQube Scan
       - name: SonarQube Scan (Frontend)
+        id: sonar_frontend
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
         with:
           projectBaseDir: apps/frontend/kpi-dashboard
+
+  docker_build:
+    name: Build, Scan, and Push Docker Images
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.outputs.backend_sonar_status == 'success' && needs.build.outputs.frontend_sonar_status == 'success'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build Backend Docker Image
+      - name: Build Backend Docker Image
+        working-directory: apps/backend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/kpi-visualization:latest .
+
+      # Build Frontend Docker Image
+      - name: Build Frontend Docker Image
+        working-directory: apps/frontend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/kpi-dashboard:latest .
+
+      # Install Trivy
+      - name: Install Trivy
+        run: |
+          sudo apt-get install wget -y
+          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_Linux-64bit.tar.gz
+          tar zxvf trivy_Linux-64bit.tar.gz
+          sudo mv trivy /usr/local/bin/
+
+      # Trivy Scan Backend
+      - name: Trivy Scan Backend
+        run: |
+          trivy image --exit-code 1 --severity HIGH,CRITICAL ${{ secrets.DOCKER_USERNAME }}/kpi-visualization:latest
+
+      # Trivy Scan Frontend
+      - name: Trivy Scan Frontend
+        run: |
+          trivy image --exit-code 1 --severity HIGH,CRITICAL ${{ secrets.DOCKER_USERNAME }}/kpi-dashboard:latest
+
+      # Push Backend Docker Image
+      - name: Push Backend Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/kpi-visualization:latest
+
+      # Push Frontend Docker Image
+      - name: Push Frontend Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/kpi-dashboard:latest
