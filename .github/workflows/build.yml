@@ -37,7 +37,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Build and analyze backend
-        working-directory: apps/backend/kpi-visualization
+        working-directory: apps/backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_DEV }}
         run: ./gradlew build sonar --info
