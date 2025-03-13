@@ -3,6 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'jacoco'
+	id "org.sonarqube" version "6.0.1.5171"
 }
 
 group = 'in.co.ad'
@@ -43,6 +44,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+
+sonar {
+  properties {
+    property "sonar.projectKey", "Arun4D_devsecops-sample"
+    property "sonar.organization", "arun4d"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+}
 tasks.named('test') {
 	useJUnitPlatform()
 }
