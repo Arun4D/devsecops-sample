@@ -62,24 +62,17 @@ jobs:
         run: sonar-scanner -Dproject.settings=sonar-project.properties
 
       - name: Wait for SonarQube Analysis
-        run: sleep 20 # Adjust as needed to allow SonarQube to process the scan
-
-      - name: Check SonarQube Quality Gate (Backend)
         id: sonar_backend_qg
-        uses: SonarSource/sonarqube-quality-gate-action@v1
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          projectBaseDir: apps/backend/kpi-visualization
-
-      - name: Store Backend SonarQube Status
-        id: set_backend_sonar_status
         run: |
-          echo "sonar_backend_status=${{ steps.sonar_backend_qg.outputs.quality-gate-status }}"
-          echo "sonar_backend_status=${{ steps.sonar_backend_qg.outputs.quality-gate-status }}" >> $GITHUB_OUTPUT
+        sleep 20  # Wait for the scan to process (adjust as needed)
+        PROJECT_KEY="Arun4D_devsecops-sample"  # Replace with your actual project key
+        SONAR_STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
+          "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$PROJECT_KEY" \
+          | jq -r '.projectStatus.status')
+        echo "Backend SonarQube Quality Gate Status: $SONAR_STATUS"
+        echo "sonar_backend_status=$SONAR_STATUS" >> $GITHUB_ENV
 
-        
+    
       # Frontend setup and build
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -110,22 +103,15 @@ jobs:
           projectBaseDir: apps/frontend/kpi-dashboard
 
       - name: Wait for SonarQube Analysis
-        run: sleep 20 # Adjust as needed to allow SonarQube to process the scan
-
-      - name: Check SonarQube Quality Gate (Frontend)
         id: sonar_frontend_qg
-        uses: SonarSource/sonarqube-quality-gate-action@v1
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          projectBaseDir: apps/frontend/kpi-dashboard
-
-      - name: Store Frontend SonarQube Status
-        id: set_frontend_sonar_status
         run: |
-          echo "sonar_frontend_status=${{ steps.sonar_frontend_qg.outputs.quality-gate-status }}"
-          echo "sonar_frontend_status=${{ steps.sonar_frontend_qg.outputs.quality-gate-status }}" >> $GITHUB_OUTPUT
+        sleep 20  # Wait for the scan to process (adjust as needed)
+        PROJECT_KEY="arun4d_kpi-dashboard"  # Replace with your actual project key
+        SONAR_STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
+          "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$PROJECT_KEY" \
+          | jq -r '.projectStatus.status')
+        echo "Frontend SonarQube Quality Gate Status: $SONAR_STATUS"
+        echo "sonar_frontend_status=$SONAR_STATUS" >> $GITHUB_ENV
 
   docker_build:
     name: Build, Scan, and Push Docker Images
