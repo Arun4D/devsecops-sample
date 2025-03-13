@@ -56,8 +56,8 @@ jobs:
           restore-keys: ${{ runner.os }}-node
 
       - name: Install and build frontend
-        working-directory: apps/frontend/kpi-dashboard
         run: |
+          cd apps/frontend/kpi-dashboard
           npm install
           npm run build
 
@@ -65,5 +65,7 @@ jobs:
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_DEV }}
-        working-directory: apps/frontend/kpi-dashboard
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: apps/frontend/kpi-dashboard  
