@@ -37,16 +37,16 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Grant execute permission for Gradle wrapper
-        working-directory: apps/backend
-        run: chmod +x gradlew
-
-      - name: Build and analyze backend
-        working-directory: apps/backend
+      - name: Build and SonarQube Scan (Backend) 
+        working-directory: apps/backend/kpi-visualization
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
-        run: ./gradlew -p kpi-visualization build sonar --info
+        run: |
+          chmod +x ../gradlew 
+          ../gradlew clean build test --info
+          sonar-scanner -Dproject.settings=sonar-project.properties
+
 
       # Frontend setup and build
       - name: Set up Node.js
@@ -75,12 +75,3 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
         with:
           projectBaseDir: apps/frontend/kpi-dashboard
-
-      # SonarQube Scan for backend
-      - name: SonarQube Scan (Backend)
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          projectBaseDir: apps/backend/kpi-visualization

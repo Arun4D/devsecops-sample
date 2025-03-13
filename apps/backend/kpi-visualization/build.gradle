@@ -45,13 +45,6 @@ dependencies {
 }
 
 
-sonar {
-  properties {
-    property "sonar.projectKey", "Arun4D_devsecops-sample"
-    property "sonar.organization", "arun4d"
-    property "sonar.host.url", "https://sonarcloud.io"
-  }
-}
 tasks.named('test') {
 	useJUnitPlatform()
 }
