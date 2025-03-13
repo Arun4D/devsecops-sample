@@ -64,13 +64,13 @@ jobs:
       - name: Wait for SonarQube Analysis
         id: sonar_backend_qg
         run: |
-        sleep 20  # Wait for the scan to process (adjust as needed)
-        PROJECT_KEY="Arun4D_devsecops-sample"  # Replace with your actual project key
-        SONAR_STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
-          "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$PROJECT_KEY" \
-          | jq -r '.projectStatus.status')
-        echo "Backend SonarQube Quality Gate Status: $SONAR_STATUS"
-        echo "sonar_backend_status=$SONAR_STATUS" >> $GITHUB_ENV
+          sleep 20  # Wait for the scan to process (adjust as needed)
+          PROJECT_KEY="Arun4D_devsecops-sample"  # Replace with your actual project key
+          SONAR_STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
+            "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$PROJECT_KEY" \
+            | jq -r '.projectStatus.status')
+          echo "Backend SonarQube Quality Gate Status: $SONAR_STATUS"
+          echo "sonar_backend_status=$SONAR_STATUS" >> $GITHUB_ENV
 
     
       # Frontend setup and build
@@ -105,13 +105,13 @@ jobs:
       - name: Wait for SonarQube Analysis
         id: sonar_frontend_qg
         run: |
-        sleep 20  # Wait for the scan to process (adjust as needed)
-        PROJECT_KEY="arun4d_kpi-dashboard"  # Replace with your actual project key
-        SONAR_STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
-          "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$PROJECT_KEY" \
-          | jq -r '.projectStatus.status')
-        echo "Frontend SonarQube Quality Gate Status: $SONAR_STATUS"
-        echo "sonar_frontend_status=$SONAR_STATUS" >> $GITHUB_ENV
+          sleep 20  # Wait for the scan to process (adjust as needed)
+          PROJECT_KEY="arun4d_kpi-dashboard"  # Replace with your actual project key
+          SONAR_STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
+            "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$PROJECT_KEY" \
+            | jq -r '.projectStatus.status')
+          echo "Frontend SonarQube Quality Gate Status: $SONAR_STATUS"
+          echo "sonar_frontend_status=$SONAR_STATUS" >> $GITHUB_ENV
 
   docker_build:
     name: Build, Scan, and Push Docker Images
