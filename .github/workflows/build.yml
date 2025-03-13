@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for better relevancy of analysis
+          fetch-depth: 0  # Ensures better relevancy of analysis
 
       # Backend setup and build
       - name: Set up JDK 17
@@ -45,7 +45,8 @@ jobs:
         working-directory: apps/backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonar --info
+          SONAR_HOST_URL: https://sonarcloud.io
+        run: ./gradlew -p kpi-visualization build sonar --info
 
       # Frontend setup and build
       - name: Set up Node.js
@@ -66,10 +67,20 @@ jobs:
           npm install
           npm run build
 
-      # SonarQube Scan for frontend using sonar-project.properties
-      - name: SonarQube Scan
+      # SonarQube Scan for frontend
+      - name: SonarQube Scan (Frontend)
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
         with:
-          projectBaseDir: apps/frontend/kpi-dashboard  
+          projectBaseDir: apps/frontend/kpi-dashboard
+
+      # SonarQube Scan for backend
+      - name: SonarQube Scan (Backend)
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          projectBaseDir: apps/backend/kpi-visualization
