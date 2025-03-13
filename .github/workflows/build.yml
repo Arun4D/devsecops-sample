@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     outputs:
-      backend_sonar_status: ${{ steps.set_backend_sonar_status.outputs.status }}
-      frontend_sonar_status: ${{ steps.set_frontend_sonar_status.outputs.status }}
+      backend_sonar_status: ${{ steps.set_backend_sonar_status.outputs.sonar_backend_status }}
+      frontend_sonar_status: ${{ steps.set_frontend_sonar_status.outputs.sonar_frontend_status }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,7 +63,9 @@ jobs:
 
       - name: Store Backend SonarQube Status
         id: set_backend_sonar_status
-        run: echo "::set-output name=status::${{ steps.sonar_backend.outputs.quality-gate-status }}"
+        run: |
+          echo "sonar_backend_status=${{ steps.sonar_backend.outputs.quality-gate-status }}"
+          echo "sonar_backend_status=${{ steps.sonar_backend.outputs.quality-gate-status }}" >> $GITHUB_OUTPUT
 
         
       # Frontend setup and build
@@ -97,7 +99,9 @@ jobs:
 
       - name: Store Frontend SonarQube Status
         id: set_frontend_sonar_status
-        run: echo "::set-output name=status::${{ steps.sonar_frontend.outputs.quality-gate-status }}"
+        run: |
+          echo "sonar_frontend_status=${{ steps.sonar_frontend.outputs.quality-gate-status }}"
+          echo "sonar_frontend_status=${{ steps.sonar_frontend.outputs.quality-gate-status }}" >> $GITHUB_OUTPUT
 
   docker_build:
     name: Build, Scan, and Push Docker Images
