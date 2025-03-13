@@ -70,7 +70,7 @@ jobs:
             "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$PROJECT_KEY" \
             | jq -r '.projectStatus.status')
           echo "Backend SonarQube Quality Gate Status: $SONAR_STATUS"
-          echo "quality-gate-status=$SONAR_STATUS" >> $GITHUB_ENV
+          echo "quality-gate-status=$SONAR_STATUS" >> $GITHUB_OUTPUT
 
     
       # Frontend setup and build
@@ -111,7 +111,7 @@ jobs:
             "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$PROJECT_KEY" \
             | jq -r '.projectStatus.status')
           echo "Frontend SonarQube Quality Gate Status: $SONAR_STATUS"
-          echo "quality-gate-status=$SONAR_STATUS" >> $GITHUB_ENV
+          echo "quality-gate-status=$SONAR_STATUS" >> $GITHUB_OUTPUT
 
   docker_build:
     name: Build, Scan, and Push Docker Images
