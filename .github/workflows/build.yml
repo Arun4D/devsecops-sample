@@ -116,6 +116,7 @@ jobs:
   docker_build:
     name: Build, Scan, and Push Docker Images
     runs-on: ubuntu-latest
+    environment: dev
     needs: build
     if: needs.build.outputs.backend_sonar_status == 'OK' && needs.build.outputs.frontend_sonar_status == 'OK'
     steps:
