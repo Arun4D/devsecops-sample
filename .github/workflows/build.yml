@@ -69,6 +69,9 @@ jobs:
         uses: SonarSource/sonarqube-quality-gate-action@v1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          projectBaseDir: apps/backend/kpi-visualization
 
       - name: Store Backend SonarQube Status
         id: set_backend_sonar_status
@@ -114,6 +117,9 @@ jobs:
         uses: SonarSource/sonarqube-quality-gate-action@v1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          projectBaseDir: apps/frontend/kpi-dashboard
 
       - name: Store Frontend SonarQube Status
         id: set_frontend_sonar_status
