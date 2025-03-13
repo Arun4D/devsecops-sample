@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     outputs:
-      backend_sonar_status: ${{ steps.set_backend_sonar_status.outputs.sonar_backend_status }}
-      frontend_sonar_status: ${{ steps.set_frontend_sonar_status.outputs.sonar_frontend_status }}
+      backend_sonar_status: ${{ steps.sonar_backend_qg.outputs.quality-gate-status }}
+      frontend_sonar_status: ${{ steps.sonar_frontend_qg.outputs.quality-gate-status }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -61,11 +61,20 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
         run: sonar-scanner -Dproject.settings=sonar-project.properties
 
+      - name: Wait for SonarQube Analysis
+        run: sleep 20 # Adjust as needed to allow SonarQube to process the scan
+
+      - name: Check SonarQube Quality Gate (Backend)
+        id: sonar_backend_qg
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Store Backend SonarQube Status
         id: set_backend_sonar_status
         run: |
-          echo "sonar_backend_status=${{ steps.sonar_backend.outputs.quality-gate-status }}"
-          echo "sonar_backend_status=${{ steps.sonar_backend.outputs.quality-gate-status }}" >> $GITHUB_OUTPUT
+          echo "sonar_backend_status=${{ steps.sonar_backend_qg.outputs.quality-gate-status }}"
+          echo "sonar_backend_status=${{ steps.sonar_backend_qg.outputs.quality-gate-status }}" >> $GITHUB_OUTPUT
 
         
       # Frontend setup and build
@@ -97,11 +106,20 @@ jobs:
         with:
           projectBaseDir: apps/frontend/kpi-dashboard
 
+      - name: Wait for SonarQube Analysis
+        run: sleep 20 # Adjust as needed to allow SonarQube to process the scan
+
+      - name: Check SonarQube Quality Gate (Frontend)
+        id: sonar_frontend_qg
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Store Frontend SonarQube Status
         id: set_frontend_sonar_status
         run: |
-          echo "sonar_frontend_status=${{ steps.sonar_frontend.outputs.quality-gate-status }}"
-          echo "sonar_frontend_status=${{ steps.sonar_frontend.outputs.quality-gate-status }}" >> $GITHUB_OUTPUT
+          echo "sonar_frontend_status=${{ steps.sonar_frontend_qg.outputs.quality-gate-status }}"
+          echo "sonar_frontend_status=${{ steps.sonar_frontend_qg.outputs.quality-gate-status }}" >> $GITHUB_OUTPUT
 
   docker_build:
     name: Build, Scan, and Push Docker Images
