@@ -117,7 +117,7 @@ jobs:
     name: Build, Scan, and Push Docker Images
     runs-on: ubuntu-latest
     needs: build
-    if: needs.build.outputs.backend_sonar_status == 'pass' && needs.build.outputs.frontend_sonar_status == 'pass'
+    if: needs.build.outputs.backend_sonar_status == 'OK' && needs.build.outputs.frontend_sonar_status == 'OK'
     steps:
       - uses: actions/checkout@v4
 
