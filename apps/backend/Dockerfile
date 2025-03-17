@@ -14,7 +14,7 @@ RUN ./gradlew clean build -x test
 
 ENV JAVA_HOME=/usr/lib/jvm/zulu11-ca
 
-RUN mkdir -p kpi-visualization/build/dependency && (cd kpi-visualization/build/dependency; $JAVA_HOME/bin/jar -xf ../libs/*.jar)
+RUN mkdir -p kpi-visualization/build/dependency && (cd kpi-visualization/build/dependency; java -Djarmode=layertools -jar ../libs/*.jar extract)
 
 RUN ls -lart /workspace/app/backend/
 RUN ls -lart /workspace/app/backend/kpi-visualization/
