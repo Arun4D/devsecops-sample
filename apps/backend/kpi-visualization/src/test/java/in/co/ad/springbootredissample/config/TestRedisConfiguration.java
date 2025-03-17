@@ -2,11 +2,10 @@ package in.co.ad.springbootredissample.config;
 
 import java.io.IOException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.springframework.boot.test.context.TestConfiguration;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import redis.embedded.RedisServer;
 
 @TestConfiguration

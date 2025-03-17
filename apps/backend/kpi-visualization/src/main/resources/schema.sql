@@ -1,1 +1,4 @@
-Create table IF NOT EXISTS Sample(id INT NOT NULL IDENTITY(1,1), start_date Date);
+CREATE TABLE IF NOT EXISTS Sample (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    start_date DATE
+);

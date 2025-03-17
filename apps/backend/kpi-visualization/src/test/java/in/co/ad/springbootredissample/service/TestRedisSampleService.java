@@ -14,10 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles({"test"})
 public class TestRedisSampleService {
 
-    @MockBean
+    @Mock
     private RedisSampleRepository redisSampleRepository;
 
     @InjectMocks
@@ -54,7 +54,7 @@ public class TestRedisSampleService {
         all.add(redisSample);
         all.add(redisSample2);
 
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.openMocks(this); // Initializes @Mock annotations
         Mockito.when(redisSampleRepository.save(any(RedisSample.class))).thenReturn(redisSample);
         Mockito.when(redisSampleRepository.findAll()).thenReturn(all);
         Mockito.when(redisSampleRepository.findById(redisSample.getId())).thenReturn(Optional.of(redisSample));
@@ -62,7 +62,7 @@ public class TestRedisSampleService {
     }
 
     @Test
-    public void shouldSaveSample_toRedis() {
+    public void shouldSaveSampleToRedis() {
 
         RedisSample redisSample = new RedisSample();
         redisSample.setId(1L);
@@ -74,7 +74,7 @@ public class TestRedisSampleService {
     }
 
     @Test
-    public void shouldUpateSample_toRedis() {
+    public void shouldUpateSampleToRedis() {
 
         RedisSample redisSample = new RedisSample();
         redisSample.setId(1L);
