@@ -48,14 +48,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.register('copyDependencies', Copy) {
+/* tasks.register('copyDependencies', Copy) {
     from configurations.runtimeClasspath
     into "$buildDir/dependency"
 }
 
 tasks.named('build') {
     dependsOn 'copyDependencies'
-}
+} */
 
 tasks.named('test') {
 	useJUnitPlatform()
