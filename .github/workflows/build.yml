@@ -100,7 +100,7 @@ jobs:
         working-directory: apps/frontend/kpi-dashboard
         run: |
           npm run test -- --code-coverage --browsers=ChromeHeadless
-          
+
       # Frontend SonarQube Scan
       - name: SonarQube Scan (Frontend)
         id: sonar_frontend
@@ -110,6 +110,9 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
         with:
           projectBaseDir: apps/frontend/kpi-dashboard
+          args: >
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
 
       - name: Wait for SonarQube Analysis
         id: sonar_frontend_qg
