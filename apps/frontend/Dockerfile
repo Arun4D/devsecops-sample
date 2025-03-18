@@ -12,8 +12,8 @@ RUN npm cache clean --force
 COPY kpi-dashboard .
 
 # Install dependencies (excluding dev dependencies) and build the application
-RUN npm install --omit=dev
-RUN npm run build --prod
+RUN npm install
+RUN npm run build --omit=dev
 
 
 ### STAGE 2: RUN ###
