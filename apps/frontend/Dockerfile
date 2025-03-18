@@ -1,6 +1,6 @@
 ### STAGE 1: BUILD ###
-# Use Node.js 18.18.0 Alpine as the base image for the build stage
-FROM node:18.18.0-alpine AS build
+# Use Node.js 18.19.0 Alpine as the base image for the build stage
+FROM node:18.19.0-alpine AS build
 
 # Create a working directory inside the container
 WORKDIR /workspace/app/frontend/kpi-dashboard/
@@ -11,8 +11,8 @@ RUN npm cache clean --force
 # Copy the application code into the container
 COPY kpi-dashboard .
 
-# Install dependencies and build the application
-RUN npm install
+# Install dependencies (excluding dev dependencies) and build the application
+RUN npm install --omit=dev
 RUN npm run build --prod
 
 
