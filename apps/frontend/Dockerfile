@@ -19,13 +19,9 @@ RUN npm install
 RUN npm run build  --omit=dev
 
 
-
 ### STAGE 2: RUN ###
 # Use the nginx:alpine image as the base image for the run stage
 FROM nginx:alpine AS ngi
-
-# Remove unnecessary packages to reduce vulnerabilities
-RUN apk del libaom3 libexpat1 libldap-2.5-0 libtiff6 libxml2 libxslt1.1 perl-base zlib1g
 
 # Copy the built application from the build stage to the nginx HTML directory
 COPY --from=build /workspace/app/frontend/kpi-dashboard/dist/kpi-dashboard /usr/share/nginx/html
