@@ -1,29 +1,30 @@
-### STAGE 1:BUILD ###
-# Defining a node image to be used as giving it an alias of "build"
-# Which version of Node image to use depends on project dependencies 
-# This is needed to build and compile our code 
-# while generating the docker image
-FROM node:14.15.5-alpine AS build
-# Create a Virtual directory inside the docker image
-WORKDIR /workspace/app/frontend/kpi-dashboard/ 
-# Copy files to virtual directory
-# COPY package.json package-lock.json ./
-# Run command in Virtual directory
+### STAGE 1: BUILD ###
+# Use Node.js 18.18.0 Alpine as the base image for the build stage
+FROM node:18.18.0-alpine AS build
+
+# Create a working directory inside the container
+WORKDIR /workspace/app/frontend/kpi-dashboard/
+
+# Clean the npm cache
 RUN npm cache clean --force
-# Copy files from local machine to virtual directory in docker image
+
+# Copy the application code into the container
 COPY kpi-dashboard .
-RUN npm install 
+
+# Install dependencies and build the application
+RUN npm install
 RUN npm run build --prod
 
 
-### STAGE 2:RUN ###
-# Defining nginx image to be used
+### STAGE 2: RUN ###
+# Use the latest nginx image as the base image for the run stage
 FROM nginx:latest AS ngi
-# Copying compiled code and nginx config to different folder
-# NOTE: This path may change according to your project's output folder 
-COPY --from=build /workspace/app/frontend/kpi-dashboard/dist/kpi-dashboard /usr/share/nginx/html
-COPY /nginx.conf  /etc/nginx/conf.d/default.conf
-# Exposing a port, here it means that inside the container 
-# the app will be using Port 80 while running
-EXPOSE 80
 
+# Copy the built application from the build stage to the nginx HTML directory
+COPY --from=build /workspace/app/frontend/kpi-dashboard/dist/kpi-dashboard /usr/share/nginx/html
+
+# Copy the nginx configuration file
+COPY /nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80 for the nginx server
+EXPOSE 80
