@@ -99,7 +99,7 @@ jobs:
       - name: Run Unit Tests and Generate Coverage
         working-directory: apps/frontend/kpi-dashboard
         run: |
-          npm run test -- --code-coverage --browsers=ChromeHeadless
+          npm run test -- --code-coverage --browsers=ChromeHeadless --no-watch
 
       # Frontend SonarQube Scan
       - name: SonarQube Scan (Frontend)
