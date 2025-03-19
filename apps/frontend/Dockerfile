@@ -15,13 +15,18 @@ RUN npm install -g @angular/cli
 COPY kpi-dashboard .
 
 # Install dependencies (excluding dev dependencies) and build the application
-RUN npm install
-RUN npm run build  --omit=dev
+RUN npm install 
+RUN npm run build --omit=dev
 
 
 ### STAGE 2: RUN ###
 # Use the nginx:alpine image as the base image for the run stage
-FROM nginx:alpine AS ngi
+FROM nginx:alpine
+
+# Update vulnerable packages
+RUN apk update && \
+    apk upgrade libexpat libxml2 libxslt && \
+    rm -rf /var/cache/apk/*
 
 # Copy the built application from the build stage to the nginx HTML directory
 COPY --from=build /workspace/app/frontend/kpi-dashboard/dist/kpi-dashboard /usr/share/nginx/html
