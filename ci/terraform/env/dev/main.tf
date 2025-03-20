@@ -59,7 +59,7 @@ resource "azurerm_linux_virtual_machine" "kpiVisualization" {
 
   admin_ssh_key {
     username   = "adminuser"
-    public_key =  var.ssh_public_key != "" ? var.ssh_public_key : (fileexists("~/.ssh/id_rsa.pub") ? file("~/.ssh/id_rsa.pub") : null)
+    public_key =  var.ssh_public_key
   }
 
   os_disk {
