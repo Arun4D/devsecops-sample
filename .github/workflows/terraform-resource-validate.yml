@@ -29,6 +29,7 @@ env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
 
 
 permissions:
@@ -96,7 +97,7 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      run: terraform plan -out main.tfplan -var-file="./../../config/global.tfvars" -var-file="./../../config/dev.tfvars" -var="ssh_public_key=${{ secrets.SSH_PUBLIC_KEY }}"
+      run: terraform plan -out main.tfplan -var="ssh_public_key=${{ env.SSH_PUBLIC_KEY }}" -var-file="./../../config/global.tfvars" -var-file="./../../config/dev.tfvars" 
 
     # Install and Run Tfsec for Static Code Analysis
     - name: Run Tfsec
