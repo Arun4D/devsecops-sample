@@ -74,5 +74,6 @@ resource "azurerm_linux_virtual_machine" "kpiVisualization" {
     version   = "latest"
   }
 
+  disable_password_authentication = true
   allow_extension_operations=false
 }
