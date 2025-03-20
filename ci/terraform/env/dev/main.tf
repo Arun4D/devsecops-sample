@@ -29,6 +29,24 @@ resource "azurerm_network_interface" "kpiVisualization" {
   }
 }
 
+resource "azurerm_network_security_group" "kpiVisualization" {
+  name                = "kpiVisualization-nsg"
+  location            = azurerm_resource_group.kpiVisualization.location
+  resource_group_name = azurerm_resource_group.kpiVisualization.name
+
+  security_rule {
+    name                       = "AllowSSH"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
 resource "azurerm_linux_virtual_machine" "kpiVisualization" {
   name                = "kpiVisualization-machine"
   resource_group_name = azurerm_resource_group.kpiVisualization.name
@@ -55,4 +73,6 @@ resource "azurerm_linux_virtual_machine" "kpiVisualization" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+
+  allow_extension_operations=false
 }

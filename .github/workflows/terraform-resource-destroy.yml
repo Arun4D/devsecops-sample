@@ -14,7 +14,7 @@ on:
 
 env:
   TF_VERSION: '1.5.6' # Adjust the version as per your requirement
-  WORKING_DIRECTORY: './3_Infra/env/dev' # Path to your Terraform configuration directory
+  WORKING_DIRECTORY: './ci/terraform/env/dev' # Path to your Terraform configuration directory
   LOCATION: ${{ github.event.inputs.location }}
   RESOURCE_GROUP_NAME: "terraform-backend-rg"
   STORAGE_ACCOUNT_NAME: "tfbackendmodule"
@@ -22,7 +22,7 @@ env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-
+  SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
 
 permissions:
   id-token: write
@@ -89,7 +89,7 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      run: terraform plan -destroy -out destroy-main.tfplan -var-file="./../../config/global.tfvars" -var-file="./../../config/dev.tfvars"
+      run: terraform plan -destroy -out destroy-main.tfplan -var="ssh_public_key=${{ env.SSH_PUBLIC_KEY }}" -var-file="./../../config/global.tfvars" -var-file="./../../config/dev.tfvars"
 
     - name: Terraform Apply Destroy
       working-directory: ${{ env.WORKING_DIRECTORY }}
