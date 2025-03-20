@@ -42,8 +42,8 @@ resource "azurerm_network_security_group" "kpiVisualization" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
+    source_address_prefix      = "103.102.96.237" # Replace with your authorized IP range
+    destination_address_prefix = "${azurerm_subnet.kpiVisualization.address_prefixes[0]}"
   }
 }
 
