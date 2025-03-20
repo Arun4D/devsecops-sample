@@ -90,6 +90,21 @@ jobs:
       working-directory: ${{ env.WORKING_DIRECTORY }}
       run: terraform validate
 
+    - name: Write SSH Private Key
+      run: |
+        mkdir -p /tmp/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > /tmp/.ssh/id_rsa
+        chmod 600 /tmp/.ssh/id_rsa
+
+    - name: Write SSH Public Key
+      run: |
+        echo "${{ secrets.SSH_PUBLIC_KEY }}" > /tmp/.ssh/id_rsa.pub
+
+    - name: Set SSH Key Permissions
+      run: |
+        chmod 600 /tmp/.ssh/id_rsa
+        chmod 644 /tmp/.ssh/id_rsa.pub
+        
     - name: Terraform Plan
       working-directory: ${{ env.WORKING_DIRECTORY }}
       env:
@@ -122,3 +137,8 @@ jobs:
     - name: Run OPA Policy Check
       run: |
         opa eval -i terraform.json -d policy.rego "data.terraform.azure"
+
+    # Clean up SSH keys
+    - name: Clean Up SSH Keys
+      run: |
+        rm -rf /tmp/.ssh/id_rsa /tmp/.ssh/id_rsa.pub
