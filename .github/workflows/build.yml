@@ -1,10 +1,20 @@
 name: E2E_Build
 on:
-  push:
-    branches:
-      - main
+  #push:
+  #  branches:
+  #    - main
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment (e.g., dev, staging, prod)'
+        required: true
+        default: dev
+      location:
+        description: 'Location of resource deployment  (e.g., eastus, westus)'
+        required: true
+        default: eastus
 
 jobs:
   build:
