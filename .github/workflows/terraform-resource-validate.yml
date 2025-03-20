@@ -112,7 +112,7 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      run: terraform plan -out main.tfplan -var="ssh_public_key=${{ env.SSH_PUBLIC_KEY }}" -var-file="./../../config/global.tfvars" -var-file="./../../config/dev.tfvars" 
+      run: terraform plan -out main.tfplan -var="ssh_public_key=$(cat /tmp/.ssh/id_rsa.pub)" -var-file="./../../config/global.tfvars" -var-file="./../../config/dev.tfvars" 
 
     # Install and Run Tfsec for Static Code Analysis
     - name: Run Tfsec
