@@ -98,7 +98,8 @@ jobs:
 
     - name: Write SSH Public Key
       run: |
-        echo "${{ secrets.SSH_PUBLIC_KEY }}" > /tmp/.ssh/id_rsa.pub
+        printf "%s\n" "${{ secrets.SSH_PUBLIC_KEY }}" > /tmp/.ssh/id_rsa.pub
+
 
     - name: Set SSH Key Permissions
       run: |
