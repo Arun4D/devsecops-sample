@@ -128,7 +128,9 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      run: terraform plan -out main.tfplan  -var-file="./../../config/global.tfvars" -var-file="./../../config/dev.tfvars" 
+      run: |
+        terraform plan -out main.tfplan  -var-file="./../../config/global.tfvars" -var-file="./../../config/dev.tfvars" 
+        terraform show -json main.tfplan > terraform.json
 
     # Install and Run Tfsec for Static Code Analysis
     - name: Run Tfsec
@@ -151,6 +153,7 @@ jobs:
 
     # Run OPA Policy Checks
     - name: Run OPA Policy Check
+      working-directory: ${{ env.WORKING_DIRECTORY }}
       run: |
         opa eval -i terraform.json -d policy.rego "data.terraform.azure"
 
