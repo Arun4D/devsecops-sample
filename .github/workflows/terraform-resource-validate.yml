@@ -112,6 +112,7 @@ jobs:
         chmod 644 /tmp/.ssh/id_rsa.pub
 
     - name: Generate Terraform Variables File
+      working-directory: ${{ env.WORKING_DIRECTORY }}
       run: |
         echo 'ssh_public_key = "'$(cat /tmp/.ssh/id_rsa.pub)'"' > terraform.auto.tfvars
 
