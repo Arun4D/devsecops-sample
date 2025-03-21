@@ -96,10 +96,20 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > /tmp/.ssh/id_rsa
         chmod 600 /tmp/.ssh/id_rsa
 
+    - name: Debug SSH Public Key
+      run: |
+        if [[ -z "${{ secrets.SSH_PUBLIC_KEY }}" ]]; then
+          echo "❌ SSH_PUBLIC_KEY is empty!"
+          exit 1
+        else
+          echo "✅ SSH_PUBLIC_KEY is set!"
+          echo "SSH Public Key Length: $(echo -n "${{ secrets.SSH_PUBLIC_KEY }}" | wc -c)"
+        fi
+
     - name: Write SSH Public Key
       run: |
-        printf "%s\n" "${{ secrets.SSH_PUBLIC_KEY }}" > /tmp/.ssh/id_rsa.pub
-        cat /tmp/.ssh/id_rsa.pub
+        printf "%s\n" "${{ secrets.SSH_PUBLIC_KEY }}" | tr -d '\r' > /tmp/.ssh/id_rsa.pub
+        chmod 644 /tmp/.ssh/id_rsa.pub
 
     - name: Generate Terraform Variables File
       run: |
