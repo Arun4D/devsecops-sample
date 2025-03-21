@@ -155,6 +155,8 @@ jobs:
     - name: Run OPA Policy Check
       working-directory: ${{ env.WORKING_DIRECTORY }}
       run: |
+        opa fmt policy.rego
+        opa check policy.rego
         opa eval -i terraform.json -d policy.rego "data.terraform.azure"
 
     # Clean up SSH keys
