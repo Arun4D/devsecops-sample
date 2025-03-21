@@ -2,7 +2,7 @@ package terraform.azure
 
 deny[msg] {
     input.resource_type == "azurerm_storage_account"
-    not input.properties.enable_https_traffic_only
+    input.properties.enable_https_traffic_only == false
     msg := "Storage account must have HTTPS traffic enabled"
 }
 

@@ -157,7 +157,7 @@ jobs:
       run: |
         opa fmt policy.rego
         opa check policy.rego
-        opa eval -i terraform.json -d policy.rego "data.terraform.azure"
+        opa eval --input terraform.json --data policy.rego "data"
 
     # Clean up SSH keys
     - name: Clean Up SSH Keys
