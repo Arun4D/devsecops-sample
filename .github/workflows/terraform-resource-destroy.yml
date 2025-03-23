@@ -82,6 +82,27 @@ jobs:
       working-directory: ${{ env.WORKING_DIRECTORY }}
       run: terraform validate
 
+    - name: Write SSH Private Key
+      run: |
+        mkdir -p /tmp/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > /tmp/.ssh/id_rsa
+        chmod 600 /tmp/.ssh/id_rsa
+
+    - name: Write SSH Public Key
+      run: |
+        printf "%s\n" "${{ secrets.SSH_PUBLIC_KEY }}" | tr -d '\r' > /tmp/.ssh/id_rsa.pub
+        chmod 644 /tmp/.ssh/id_rsa.pub
+
+    - name: Generate Terraform Variables File
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: |
+        echo 'ssh_public_key = "'$(cat /tmp/.ssh/id_rsa.pub)'"' > terraform.auto.tfvars
+
+    - name: Set SSH Key Permissions
+      run: |
+        chmod 600 /tmp/.ssh/id_rsa
+        chmod 644 /tmp/.ssh/id_rsa.pub
+     
     - name: Terraform Plan Destroy
       working-directory: ${{ env.WORKING_DIRECTORY }}
       env:
@@ -89,7 +110,7 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      run: terraform plan -destroy -out destroy-main.tfplan -var="ssh_public_key=${{ env.SSH_PUBLIC_KEY }}" -var-file="./../../config/global.tfvars" -var-file="./../../config/dev.tfvars"
+      run: terraform plan -destroy -out destroy-main.tfplan -var-file="./../../config/global.tfvars" -var-file="./../../config/dev.tfvars"
 
     - name: Terraform Apply Destroy
       working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -99,6 +120,11 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       run: terraform apply destroy-main.tfplan
+
+    # Clean up SSH keys
+    - name: Clean Up SSH Keys
+      run: |
+        rm -rf /tmp/.ssh/id_rsa /tmp/.ssh/id_rsa.pub
 
     - name: Cleanup tfstate Resource Group
       env:
