@@ -7,7 +7,7 @@ config = {
 
   vnet = {
     vnet_name     = "kpiVisualizationVNet",
-    address_space = ["10.0.2.0/16"],
+    address_space = ["10.0.0.0/16"],
     subnet       = {
       subnet_name     = "kpiVisualizationSubnet",
       address_prefix  = ["10.0.2.0/24"]
